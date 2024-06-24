@@ -1,0 +1,21 @@
+version: master
+
+phases:
+  pre_build:
+    commands:
+      - echo Logging in to Amazon ECR...
+      - aws ecr get-login-password --region ap-southeast-2 | docker login --username AWS --password-stdin 519948377493.dkr.ecr.ap-southeast-2.amazonaws.com
+      - echo Logged in to Amazon ECR successfully
+
+  build:
+    commands:
+      - echo Building Docker Image for Flask Application
+      - docker build -t app-ecr-v1 .
+      - echo Image built successfully
+
+  post_build:
+    commands:
+      - echo Tagging Flask Docker image
+      - docker tag app-ecr-v1:latest 519948377493.dkr.ecr.ap-southeast-2.amazonaws.com/app-ecr-v1:latest
+      - docker push 519948377493.dkr.ecr.ap-southeast-2.amazonaws.com/app-ecr-v1:latest
+      - echo Flask image pushed to ECR
