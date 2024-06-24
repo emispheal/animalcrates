@@ -302,6 +302,19 @@ def get_spin_request():
     }
     return jsonify(data)
 
+@app.route('/api/test', methods=['GET'])
+def get_some_request():
+
+    data = {
+        'message': 'Hello, World! testing',
+        'status': 'success',
+    }
+    return jsonify(data)
+
+@app.route('/', methods=['GET'])
+def default_route():
+    return "Hello"
+
 def pretty_print(display):
     for j in range(5):
         for i in range(5):
@@ -309,7 +322,7 @@ def pretty_print(display):
         print("\n", end="")
 
 if __name__ == '__main__':
-    # app.run(debug=True)
+    app.run(debug=True)
     # reel = Reels(get_reelstrips())
     # print(reel.get_base_display())
     # pretty_print(reel.get_base_display(reel.presets))
@@ -317,9 +330,9 @@ if __name__ == '__main__':
     # wincalc = WinCalc(DONT_CASCADE, SCATTER_SYMBOLS, WILD_SYMBOLS)
     # print(wincalc.calc_wins(cur_display))
 
-    reel = Reels(get_reelstrips(), [[17,23,18,13,23]])
-    reel.do_spin()
-    print(reel.final_data)
+    # reel = Reels(get_reelstrips(), [[17,23,18,13,23]])
+    # reel.do_spin()
+    # print(reel.final_data)
 
 
 # TESTS: check wrawp around, check scatter only at end, check scatter retrigger, check freespins, check multi presets
