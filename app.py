@@ -313,7 +313,7 @@ def get_some_request():
 
 @app.route('/', methods=['GET'])
 def default_route():
-    return "Hello"
+    return "Hello again!"
 
 def pretty_print(display):
     for j in range(5):
