@@ -220,7 +220,7 @@ class WinCalc:
                 # not the first reel
                 for row_idx, symbol in enumerate(col):
                     for candidate_symbol in seq_wins:
-                        if (symbol == candidate_symbol or symbol in self.wild_symbols) and seq_wins[candidate_symbol]["last_col"] - col_idx <= 1:
+                        if (symbol == candidate_symbol or symbol in self.wild_symbols) and col_idx - seq_wins[candidate_symbol]["last_col"] <= 1:
                             seq_wins[candidate_symbol]["positions"].append((col_idx, row_idx))
 
                             if seq_wins[candidate_symbol]["last_col"] != col_idx:
@@ -292,7 +292,8 @@ def get_reelstrips():
 
 @app.route('/api/data', methods=['GET'])
 def get_spin_request():
-    reel = Reels(get_reelstrips(), [[17,23,18,13,23]])
+    reel = Reels(get_reelstrips(), [[17,23,11,13,23]])
+    # reel = Reels(get_reelstrips())
     reel.do_spin()
 
     data = {
@@ -304,10 +305,17 @@ def get_spin_request():
 
 @app.route('/api/test', methods=['GET'])
 def get_some_request():
+    reel = Reels(get_reelstrips(), [[17,23,18,13,23]])
+    # reel.do_spin()
+    wincalc = WinCalc(DONT_CASCADE, SCATTER_SYMBOLS, WILD_SYMBOLS)
+    cur_display = reel.get_base_display(reel.presets)
+
+    print()
 
     data = {
         'message': 'Hello, World! testing',
         'status': 'success',
+        'slot_data': wincalc.calc_wins(cur_display)
     }
     return jsonify(data)
 
