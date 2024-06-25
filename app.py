@@ -1,6 +1,6 @@
 
 
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 import random
 import copy
 
@@ -76,7 +76,7 @@ class Reels:
 
     def do_spin(self, presets = None):
         while self.rounds_left > 0 or self.cur_mode == "cascade":
-            print(self.rounds_left, self.cur_mode, self.cur_scatter_wins)
+            print(self.rounds_left, self.cur_mode, self.cur_scatter_wins, self.in_freespin)
             
             # cascade is a follow up
             if self.cur_mode == "base":
@@ -143,9 +143,9 @@ class Reels:
         if presets:
             cur_preset = self.presets.pop()
 
-        if cur_preset is not None:
+        if cur_preset is not None and len(cur_preset) > 0:
             print("Using preset: ", cur_preset)
-            return [reelstrip.get_stop_result(ROWS, values) for reelstrip, values in zip(self.reelstrips, cur_preset)]
+            return [reelstrip.get_stop_result(ROWS, value) for reelstrip, value in zip(self.reelstrips, cur_preset)]
         else:
             return [reelstrip.get_stop_result(ROWS) for reelstrip in self.reelstrips]
         
@@ -292,7 +292,8 @@ def get_reelstrips():
 
 @app.route('/api/data', methods=['GET'])
 def get_spin_request():
-    reel = Reels(get_reelstrips(), [[17,23,11,13,23]])
+    # reel = Reels(get_reelstrips(), [[17,23,11,13,23]])
+    reel = Reels(get_reelstrips(), [[26,12,33,30,1]])
     # reel = Reels(get_reelstrips())
     reel.do_spin()
 
@@ -322,6 +323,27 @@ def get_some_request():
 @app.route('/', methods=['GET'])
 def default_route():
     return "Hello again!"
+
+@app.route('/api/spin', methods=['POST'])
+def handle_spin_request():
+    resp_dict = request.get_json()
+    presets = resp_dict.get("presets")
+    reel = Reels(get_reelstrips(), [presets])
+    # reel = Reels(get_reelstrips())
+    reel.do_spin()
+
+    data = {
+        'version': '0.1',
+        'status': 'success',
+        'slot_data': reel.final_data,
+    }
+    return jsonify(data)
+
+@app.route('/api/meow', methods=['POST'])
+def test_route_delete():
+    data = request.get_json()
+    print(data)
+    return "ok"
 
 def pretty_print(display):
     for j in range(5):
