@@ -168,9 +168,9 @@ class Reels:
             if len(col) < ROWS:
                 num_missing_rows = ROWS - len(col)
                 self.reelstrips[col_idx].cascade_last_stop_idx(num_missing_rows)
-                to_add.append(self.reelstrips[col_idx].get_stop_result_from_last_stop(num_missing_rows))
+                to_add.insert(0, self.reelstrips[col_idx].get_stop_result_from_last_stop(num_missing_rows))
             else:
-                to_add.append([])
+                to_add.insert(0, [])
 
         for i in range(COLS):
             self.cur_display[i] += to_add[i]
