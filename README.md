@@ -9,6 +9,8 @@ The client repo running on Unity can be found at: https://github.com/emispheal/s
 
 ## The Game
 Animal crates is a 5x5 cascade slots demo game with a respins feature.
+The reelstrips carding can be found in the google sheets link. 
+[Animal Crates Reelstrips Google Sheets](https://docs.google.com/spreadsheets/d/1_ZWqaFqR5fg-_MRyNZOCQxAvGlf8ttlRq4wOXQp6cR4/edit?usp=sharing)
 
 ## CI/CD
 Below is a diagram of the the CI/CD pipeline used for this project. 
