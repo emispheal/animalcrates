@@ -1,10 +1,12 @@
 
 
 from flask import Flask, jsonify, request
+from flask_cors import CORS
 from consts.app_consts import *
 from classes.reels import Reels
 
 app = Flask(__name__)
+CORS(app)
 
 @app.route('/', methods=['GET'])
 def default_route():
