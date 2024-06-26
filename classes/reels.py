@@ -1,10 +1,10 @@
 
 
 
-from app_consts import *
-from reel_strip import ReelStrip
+from consts.app_consts import *
+from classes.reel_strip import ReelStrip
 import copy
-from win_calc import WinCalc
+from classes.win_calc import WinCalc
 
 # presets format = [[1,2,3,38,2], [4,52,26,2,4], [7,8,99,3,11]]
 # unused presets ignored.

@@ -1,5 +1,5 @@
 
-from app_consts import *
+from consts.app_consts import *
 
 class WinCalc:
     def __init__(self, cascade_exceptions = [], scatter_symbols = [], wild_symbols = []):

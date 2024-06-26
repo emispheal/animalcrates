@@ -1,8 +1,8 @@
 
 
 from flask import Flask, jsonify, request
-from app_consts import *
-from reels import Reels
+from consts.app_consts import *
+from classes.reels import Reels
 
 app = Flask(__name__)
 
