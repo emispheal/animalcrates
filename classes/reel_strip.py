@@ -7,6 +7,9 @@ class ReelStrip:
         self.values = values
         self.last_stop = None
 
+    """
+    Generates the reelstop
+    """
     def get_stop_result(self, num_elements, stop_idx = None):
         if stop_idx is None:
             # random val in self.values idx
@@ -16,9 +19,15 @@ class ReelStrip:
         # wrap-around handling
         return [self.values[i % len(self.values)] for i in range(stop_idx, stop_idx + num_elements)]
     
+    """
+    Uses the reelstop's last stop to get the result
+    """
     def get_stop_result_from_last_stop(self, num_elements):
         return self.get_stop_result(num_elements, self.last_stop)
     
+    """
+    Moves/climbs the last reelstop up
+    """
     def cascade_last_stop_idx(self, move_by):
         # wrap around
         self.last_stop = (self.last_stop - move_by) % len(self.values)

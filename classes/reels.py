@@ -7,7 +7,7 @@ import copy
 from classes.win_calc import WinCalc
 
 # presets format = [[1,2,3,38,2], [4,52,26,2,4], [7,8,99,3,11]]
-# unused presets ignored.
+# if no presets are given or it runs out, generate random stops
 class Reels:
     def __init__(self, reelstrips, presets = None):
         self.reelstrips = [ReelStrip(reelstrip) for reelstrip in reelstrips]
@@ -21,11 +21,14 @@ class Reels:
         self.cur_scatter_wins = None
         self.final_data = []
 
+    """
+    Does the entire spin sequence here, the main spin function
+    """
     def do_spin(self, presets = None):
         while self.rounds_left > 0 or self.cur_mode == "cascade":
             print(self.rounds_left, self.cur_mode, self.cur_scatter_wins, self.in_freespin)
             
-            # cascade is a follow up
+            # cascade is a follow up and doesnt use up rounds
             if self.cur_mode == "base":
                 self.rounds_left -= 1
             
@@ -34,11 +37,13 @@ class Reels:
             
             if self.cur_mode == "base":
                 self.cur_display = self.get_base_display(self.presets)
-                for rs in self.reelstrips:
-                    print(rs.last_stop)
+                # DEBUG: print stops
+                # for rs in self.reelstrips:
+                #     print(rs.last_stop)
             else:
                 self.cur_display = self.get_next_cascade_display()
 
+            # calc wins
             win_calc = WinCalc(DONT_CASCADE, SCATTER_SYMBOLS, WILD_SYMBOLS)
             cur_wins = win_calc.calc_wins(self.cur_display)
             self.cur_seq_wins = cur_wins["seq_wins"]
@@ -47,6 +52,7 @@ class Reels:
             if self.cur_seq_wins:
                 self.next_mode = "cascade"
 
+            # scatter awards 1 round for trigger and retrigger
             if self.cur_scatter_wins:
                 if self.in_freespin:
                     self.rounds_left += 1
@@ -54,6 +60,8 @@ class Reels:
                     self.in_freespin = True
                     self.rounds_left += 1
 
+            # calculate total pay for the one round of cascade/base
+            # also groups win positions 
             total_pay = 0
             cascade_positions = set()
             for symbol in self.cur_seq_wins:
@@ -62,11 +70,10 @@ class Reels:
 
             cascade_positions = list(cascade_positions)
 
-
+            # gets scatter win positions
             scatter_positions = []
             for symbol in self.cur_scatter_wins:
                 scatter_positions += self.cur_scatter_wins[symbol]["positions"]
-
 
             self.final_data.append(
                 {
@@ -81,8 +88,10 @@ class Reels:
             )
 
             self.cur_mode = self.next_mode
-            
-
+    
+    """     
+    Gets the base display, a normal spin
+    """
     def get_base_display(self, presets = None):
         self.reset()
         
@@ -95,9 +104,12 @@ class Reels:
             return [reelstrip.get_stop_result(ROWS, value) for reelstrip, value in zip(self.reelstrips, cur_preset)]
         else:
             return [reelstrip.get_stop_result(ROWS) for reelstrip in self.reelstrips]
-        
+    
+    """
+    Cascades the display and gets the new symbols
+    """
     def get_next_cascade_display(self):
-        # print("Getting next cascade display")
+
         # replace all cascaded positions with dummy Xs
         for symbols in self.cur_seq_wins:
             if self.cur_seq_wins[symbols]["cascade"]:
@@ -124,8 +136,9 @@ class Reels:
 
         return self.cur_display
 
-
-    
+    """
+    Resets reelstrips
+    """
     def reset(self):
         for reelstrip in self.reelstrips:
             reelstrip.reset()
